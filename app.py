@@ -1029,7 +1029,7 @@ def tela_login():
 def tela_home():
     topo_app()
 
-    st.markdown('<div class="home-title">📚 Sistema de Monitoria</div>', unsafe_allow_html=True)
+    st.markdown('<div class="home-title">📚 Sistema de Monitoria - CEFAE 2</div>', unsafe_allow_html=True)
     st.markdown('<div class="home-subtitle">Selecione uma das opções abaixo</div>', unsafe_allow_html=True)
 
     if st.session_state.mensagem_sucesso:
