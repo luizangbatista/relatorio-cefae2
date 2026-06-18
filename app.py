@@ -31,6 +31,22 @@ ID_PLANILHA = "1jJMxohHrnm-Uu4BX98Jc2Sob1nkZmPQWR4u7ukbNNSc"
 COLUNAS_ALUNOS = ["turma", "aluno"]
 COLUNAS_RELATORIOS = ["data", "turma", "monitor", "alunos", "relatorio"]
 
+MESES = {
+    1: "Jan",
+    2: "Fev",
+    3: "Mar",
+    4: "Abr",
+    5: "Mai",
+    6: "Jun",
+    7: "Jul",
+    8: "Ago",
+    9: "Set",
+    10: "Out",
+    11: "Nov",
+    12: "Dez",
+}
+
+
 MONITORES = [
     "Arthur Rocha - 5º ano",
     "Alice - 1º ano",
@@ -507,6 +523,8 @@ def carregar_relatorios():
     if not valores:
         df = pd.DataFrame(columns=COLUNAS_RELATORIOS)
         df["data_dt"] = pd.to_datetime(pd.Series(dtype="object"))
+        df["mes_num"] = pd.Series(dtype="Int64")
+        df["mes_nome"] = pd.Series(dtype="object")
         df["alunos_lista"] = pd.Series(dtype="object")
         return df
 
@@ -516,6 +534,8 @@ def carregar_relatorios():
     if not linhas:
         df = pd.DataFrame(columns=COLUNAS_RELATORIOS)
         df["data_dt"] = pd.to_datetime(pd.Series(dtype="object"))
+        df["mes_num"] = pd.Series(dtype="Int64")
+        df["mes_nome"] = pd.Series(dtype="object")
         df["alunos_lista"] = pd.Series(dtype="object")
         return df
 
@@ -527,7 +547,15 @@ def carregar_relatorios():
         df[col] = df[col].fillna("").astype(str).str.strip()
 
     df = df[COLUNAS_RELATORIOS].copy()
-    df["data_dt"] = pd.to_datetime(df["data"], errors="coerce")
+
+    # As datas são salvas na planilha como YYYY-MM-DD.
+    # O fallback com dayfirst=True mantém compatibilidade com linhas antigas em DD/MM/AAAA.
+    datas_iso = pd.to_datetime(df["data"], format="%Y-%m-%d", errors="coerce")
+    datas_br = pd.to_datetime(df["data"], dayfirst=True, errors="coerce")
+    df["data_dt"] = datas_iso.fillna(datas_br).dt.normalize()
+    df["mes_num"] = df["data_dt"].dt.month.astype("Int64")
+    df["mes_nome"] = df["mes_num"].map(MESES)
+
     df["alunos_lista"] = df["alunos"].str.split(";").apply(
         lambda lista: {item.strip() for item in lista if item.strip()}
     )
@@ -623,7 +651,7 @@ def deletar_relatorios(df_filtrado, indices_filtrados):
 # FILTROS
 # =========================================================
 
-def filtrar_relatorios(df, turma=None, aluno=None, monitor=None, data_ini=None, data_fim=None):
+def filtrar_relatorios(df, turma=None, aluno=None, monitor=None, mes=None):
     if df.empty:
         return df.copy()
 
@@ -638,16 +666,15 @@ def filtrar_relatorios(df, turma=None, aluno=None, monitor=None, data_ini=None, 
     if aluno and aluno != "Todos":
         filtrado = filtrado[filtrado["alunos_lista"].apply(lambda s: aluno in s)]
 
-    if data_ini:
-        filtrado = filtrado[filtrado["data_dt"] >= pd.Timestamp(data_ini)]
-
-    if data_fim:
-        filtrado = filtrado[filtrado["data_dt"] <= pd.Timestamp(data_fim)]
+    if mes and mes != "Todos":
+        mes_num = {nome: numero for numero, nome in MESES.items()}.get(mes)
+        if mes_num is not None:
+            filtrado = filtrado[filtrado["mes_num"] == mes_num]
 
     return filtrado.sort_values("data_dt", ascending=False).reset_index(drop=True)
 
 
-def gerar_texto_filtros_utilizados(turma_filtro, aluno_filtro, monitor_filtro, data_ini, data_fim):
+def gerar_texto_filtros_utilizados(turma_filtro, aluno_filtro, monitor_filtro, mes_filtro):
     filtros = []
 
     if turma_filtro and turma_filtro != "Todas":
@@ -659,11 +686,8 @@ def gerar_texto_filtros_utilizados(turma_filtro, aluno_filtro, monitor_filtro, d
     if monitor_filtro and monitor_filtro != "Todos":
         filtros.append(f"Monitor: {monitor_filtro}")
 
-    if data_ini:
-        filtros.append(f"Data inicial: {data_ini.strftime('%d/%m/%Y')}")
-
-    if data_fim:
-        filtros.append(f"Data final: {data_fim.strftime('%d/%m/%Y')}")
+    if mes_filtro and mes_filtro != "Todos":
+        filtros.append(f"Mês: {mes_filtro}")
 
     return " | ".join(filtros) if filtros else ""
 
@@ -835,7 +859,9 @@ def gerar_pdf_relatorios(df, filtros_texto):
         c.drawString(margem_esq, y, "Nenhum relatório encontrado.")
     else:
         for i, row in enumerate(df.itertuples(index=False)):
-            data_convertida = pd.to_datetime(getattr(row, "data", ""), errors="coerce")
+            data_convertida = pd.to_datetime(getattr(row, "data", ""), format="%Y-%m-%d", errors="coerce")
+            if pd.isna(data_convertida):
+                data_convertida = pd.to_datetime(getattr(row, "data", ""), dayfirst=True, errors="coerce")
             data_formatada = (
                 data_convertida.strftime("%d/%m")
                 if pd.notna(data_convertida)
@@ -902,7 +928,9 @@ def gerar_docx_relatorios(df, filtros_texto):
         r.font.size = Pt(11)
     else:
         for i, row in enumerate(df.itertuples(index=False)):
-            data_convertida = pd.to_datetime(getattr(row, "data", ""), errors="coerce")
+            data_convertida = pd.to_datetime(getattr(row, "data", ""), format="%Y-%m-%d", errors="coerce")
+            if pd.isna(data_convertida):
+                data_convertida = pd.to_datetime(getattr(row, "data", ""), dayfirst=True, errors="coerce")
             data_formatada = (
                 data_convertida.strftime("%d/%m")
                 if pd.notna(data_convertida)
@@ -1163,7 +1191,7 @@ def tela_consultar():
     todos_alunos = set().union(*df_relatorios["alunos_lista"].tolist()) if not df_relatorios.empty else set()
     alunos_filtro = ["Todos"] + sorted(todos_alunos)
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         turma_filtro = st.selectbox("Filtrar por turma", options=turmas)
@@ -1174,17 +1202,9 @@ def tela_consultar():
     with c3:
         monitor_filtro = st.selectbox("Filtrar por monitor", options=monitores)
 
-    usar_filtro_data = st.checkbox("Filtrar por data")
-
-    if usar_filtro_data:
-        c4, c5 = st.columns(2)
-        with c4:
-            data_ini = st.date_input("Data inicial", value=date.today(), format="DD/MM/YYYY", key="data_ini_consulta")
-        with c5:
-            data_fim = st.date_input("Data final", value=date.today(), format="DD/MM/YYYY", key="data_fim_consulta")
-    else:
-        data_ini = None
-        data_fim = None
+    with c4:
+        meses_filtro = ["Todos"] + [MESES[i] for i in range(1, 13)]
+        mes_filtro = st.selectbox("Filtrar por mês", options=meses_filtro)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1193,16 +1213,14 @@ def tela_consultar():
         turma=turma_filtro,
         aluno=aluno_filtro,
         monitor=monitor_filtro,
-        data_ini=data_ini,
-        data_fim=data_fim,
+        mes=mes_filtro,
     )
 
     filtros_texto = gerar_texto_filtros_utilizados(
         turma_filtro,
         aluno_filtro,
         monitor_filtro,
-        data_ini,
-        data_fim,
+        mes_filtro,
     )
 
     st.markdown('<div class="card-dark">', unsafe_allow_html=True)
@@ -1269,7 +1287,9 @@ def tela_consultar():
     indices_para_excluir = []
 
     for idx, row in df_filtrado.iterrows():
-        data_convertida = pd.to_datetime(row["data"], errors="coerce")
+        data_convertida = pd.to_datetime(row["data"], format="%Y-%m-%d", errors="coerce")
+        if pd.isna(data_convertida):
+            data_convertida = pd.to_datetime(row["data"], dayfirst=True, errors="coerce")
         data_formatada = data_convertida.strftime("%d/%m/%Y") if pd.notna(data_convertida) else str(row["data"])
 
         st.markdown('<div class="card-dark">', unsafe_allow_html=True)
