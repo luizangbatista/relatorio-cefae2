@@ -53,6 +53,7 @@ MONITORES = [
     "Isabela - 1º ano",
     "Maria Fernanda - 1º ano",
     "Cibele - 2º ano",
+    "Yngrid - 2º ano",
     "Ana Freitas - 3º ano",
     "Beatriz - 3º ano",
     "Lorraine - 4º ano",
