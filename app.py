@@ -85,6 +85,7 @@ TURMAS_FIXAS = {
         "Alice Marques Ferreira",
         "Ana Júlia Teixeira Garotti",
         "Anthonny Lucca Chaves Ferreira",
+        "Davi Lucca Farias Salles",
         "Hellena Martins Reis",
         "Kaleb Teixeira Barbosa",
         "Lavínia Ribeiro Costa de Almeida",
