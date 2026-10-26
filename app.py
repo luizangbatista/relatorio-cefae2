@@ -106,7 +106,7 @@ TURMAS_FIXAS = {
         "Maria Flor Valadares da Cruz Barbosa",
     ],
 
-    "1° ano Tarde – Alice": [
+    "1° ano Tarde – Clarissa": [
         "Davi Lucca de Freitas Alves",
         "Laura Maria Pereira dos Santos",
         "Maria Cecília dos Santos Silva",
@@ -138,7 +138,7 @@ TURMAS_FIXAS = {
         "Shayara Silva Duarte",
     ],
 
-    "2° ano Tarde": [
+    "2° ano Tarde – Yngrid": [
         "Agata Paixão Noronha",
         "Angelina Neves Bergamaschine Mattos",
         "Beatriz Reis Lopes Alves Gehrke",
@@ -165,7 +165,7 @@ TURMAS_FIXAS = {
         "Yan Gabriel Santos Silva",
     ],
 
-    "3° ano Tarde – Beatriz": [
+    "3° ano Tarde – Alice": [
         "Ana Sarah Pessoa Lamounier de Carvalho",
         "Artur Costa Romão",
         "Ayssa Santos Sodré",
@@ -182,7 +182,7 @@ TURMAS_FIXAS = {
         "Rafaella Lara Ribeiro dos Santos",
         "Victória Moreira dos Anjos Mendes",
     ],
-    "4º ano - Manhã": [
+    "4º ano - Manhã – Lorraine": [
         "ANA VITORIA BATISTA DA SILVA",
         "EMANUELLY HELENA ALMEIDA LINO",
         "GEOVANNA SIQUEIRA DE SOUZA",
@@ -194,7 +194,7 @@ TURMAS_FIXAS = {
         "ISABELA DA CUNHA SILVA",
         "LAURA MARCELY VALENTIM",
     ],
-    "4º ano - Tarde": [
+    "4º ano - Tarde – Roberta": [
         "ANA LUÍSA SANTOS DE JESUS",
         "ANA SOPHIA GARRIDO PÁSCOA",
         "APOLO PAIXAO NORONHA",
@@ -211,7 +211,7 @@ TURMAS_FIXAS = {
         "VALENTINA BRITO SILVA",
         "VITÓRIA E. MARTINS DOS SANTOS",
     ],
-     "5º ano - Manhã": [
+     "5º ano - Manhã – Rayanne": [
         "ANA LUIZA EZEQUIEL LIMA",
         "HELENA FERNANDES VIEIRA",
         "JESSICA EMANUELLY G. DE OLIVEIRA",
@@ -222,7 +222,7 @@ TURMAS_FIXAS = {
         "GABRIELA VIEIRA CHAVES",
     ],
     
-    "5º ano - Tarde": [
+    "5º ano - Tarde – Maria Eduarda": [
         "ALLAN GUIMARÃES",
         "ANTÔNIO CALDEIRA",
         "BEATRIZ ROMEIRO TOMAS",
