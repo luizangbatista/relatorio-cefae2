@@ -50,6 +50,7 @@ MESES = {
 MONITORES = [
     "Arthur Rocha - 5º ano",
     "Alice - 1º ano",
+    "Clarissa - 1º ano",
     "Isabela - 1º ano",
     "Maria Fernanda - 1º ano",
     "Cibele - 2º ano",
@@ -62,7 +63,8 @@ MONITORES = [
     "Rayanne - 5º ano",
     "Mariana - Assistente de Coordenação",
     "Ellen - Coordenação",
-    "Gabriela - Monitora",
+    "Gabriela - Acompanhamento",
+    "Luciana - Acompanhamento",
     "Silvana - Coordenação",
     "Vinícius - Inglês",      
 ]
